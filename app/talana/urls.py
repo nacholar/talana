@@ -1,1 +1,5 @@
-# TODO: Implemented in story 2.1 - Django URL configuration
+from django.urls import include, path
+
+urlpatterns = [
+    path("", include("health.urls")),
+]

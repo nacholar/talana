@@ -1,1 +1,7 @@
-# TODO: Implemented in story 2.1 - Health check URL configuration (/healthz/)
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("healthz/", views.healthz, name="healthz"),
+]

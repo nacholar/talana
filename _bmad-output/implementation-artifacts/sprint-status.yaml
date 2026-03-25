@@ -1,0 +1,81 @@
+# generated: 2026-03-24
+# last_updated: 2026-03-24 (stories 1-1, 1-2, 1-3, 1-4 done; 1-5 review; 1-6 ready-for-dev)
+# project: talana
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-24
+last_updated: 2026-03-25 # story 2-1 review; story 2-2 review
+project: talana
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 1: GCP Infrastructure Foundation
+  epic-1: in-progress
+  1-1-repository-scaffold-terraform-state-bootstrap: done
+  1-2-networking-module-private-vpc-cloud-nat-firewall: done
+  1-3-iam-module-service-accounts-workload-identity-federation-secret-manager: done
+  1-4-gke-autopilot-module-private-cluster-with-workload-identity: done
+  1-5-cloud-sql-module-postgresql-on-private-ip: done
+  1-6-artifact-registry-module-root-terraform-composition: done
+  epic-1-retrospective: optional
+
+  # Epic 2: Containerized Application on Kubernetes
+  epic-2: in-progress
+  2-1-django-application-secret-manager-sdk-healthz-database-integration: done
+  2-2-multi-stage-dockerfile-non-root-container-with-whitenoise-static-files: review
+  2-3-kubernetes-manifests-blue-green-deployments-services-ingress: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Continuous Integration Pipeline
+  epic-3: backlog
+  3-1-ci-workflow-django-tests-dockerfile-lint-terraform-validate: backlog
+  3-2-ci-workflow-docker-build-verification-pr-merge-blocking: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Blue/Green Continuous Deployment Pipeline
+  epic-4: backlog
+  4-1-cd-workflow-oidc-authentication-image-build-push: backlog
+  4-2-cd-workflow-inactive-slot-detection-deployment: backlog
+  4-3-cd-workflow-smoke-test-traffic-switch: backlog
+  4-4-rollback-script-instant-slot-re-patch: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Documentation, TLS & Reviewer Experience
+  epic-5: backlog
+  5-1-dns-tls-live-application-url: backlog
+  5-2-deployment-guide-bootstrap-from-zero: backlog
+  5-3-readme-architecture-diagram-cost-estimate: backlog
+  epic-5-retrospective: optional

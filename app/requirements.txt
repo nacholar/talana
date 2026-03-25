@@ -1,1 +1,5 @@
-# TODO: Implemented in story 2.1 - Django application dependencies
+django==5.2.*
+psycopg2-binary
+google-cloud-secret-manager
+whitenoise
+gunicorn
