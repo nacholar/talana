@@ -1,1 +1,70 @@
-# TODO: Implemented in story 3.1 - CI workflow (Django tests, Dockerfile lint, Terraform validate)
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  django-tests:
+    name: Django Tests
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: talana.settings_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        working-directory: app
+        run: pip install -r requirements.txt
+      - name: Run tests
+        working-directory: app
+        run: python manage.py test
+
+  dockerfile-lint:
+    name: Dockerfile Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: app/Dockerfile
+          config: .hadolint.yaml
+
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.10"
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init -backend=false
+      - name: Terraform Format Check
+        working-directory: terraform
+        run: terraform fmt -check -recursive
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
+      - name: Terraform Init Bootstrap
+        working-directory: terraform/bootstrap
+        run: terraform init -backend=false
+      - name: Terraform Validate Bootstrap
+        working-directory: terraform/bootstrap
+        run: terraform validate
+
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t django:${{ github.sha }} app/
