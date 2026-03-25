@@ -1,1 +1,17 @@
-# TODO: Implemented in story 2.3 - Green service Kubernetes manifest
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-green-svc
+  namespace: default
+  annotations:
+    # Required for GCP HTTP(S) LB container-native load balancing (NEG).
+    # Without this, the GCP LB cannot discover backends via the Ingress.
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  type: ClusterIP
+  selector:
+    app: django
+    slot: green
+  ports:
+    - port: 80
+      targetPort: 8000

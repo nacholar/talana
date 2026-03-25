@@ -1,1 +1,92 @@
-# TODO: Implemented in story 2.3 - Green deployment Kubernetes manifest
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-green
+  namespace: default
+  labels:
+    app: django
+    slot: green
+    env: production
+    version: GIT_SHA
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django
+      slot: green
+  template:
+    metadata:
+      labels:
+        app: django
+        slot: green
+        env: production
+        version: GIT_SHA
+    spec:
+      serviceAccountName: django-ksa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+      initContainers:
+        - name: db-migrate
+          # SUBSTITUTE: Replace PROJECT_ID and GIT_SHA before applying.
+          image: us-central1-docker.pkg.dev/PROJECT_ID/talana-artifact-registry/django:GIT_SHA
+          command: ["python", "manage.py", "migrate", "--noinput"]
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: "talana.settings"
+            - name: GCP_PROJECT_ID
+              value: "PROJECT_ID"
+            - name: DJANGO_ALLOWED_HOSTS
+              value: "*"
+            - name: DJANGO_SECURE_SSL_REDIRECT
+              value: "False"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+      containers:
+        - name: django
+          # SUBSTITUTE: Replace PROJECT_ID and GIT_SHA before applying.
+          image: us-central1-docker.pkg.dev/PROJECT_ID/talana-artifact-registry/django:GIT_SHA
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: "talana.settings"
+            - name: GCP_PROJECT_ID
+              value: "PROJECT_ID"
+            - name: DJANGO_ALLOWED_HOSTS
+              value: "*"
+            - name: DJANGO_SECURE_SSL_REDIRECT
+              value: "False"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /healthz/
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz/
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5

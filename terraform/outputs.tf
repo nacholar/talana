@@ -35,8 +35,8 @@ output "instance_connection_name" {
 }
 
 output "lb_ip" {
-  description = "GCP HTTP(S) Load Balancer IP (set after Story 2.3 Ingress provisioning)"
-  value       = null # TODO: populated in Story 2.3
+  description = "GCP HTTP(S) Load Balancer static IP for DNS configuration"
+  value       = google_compute_global_address.lb_ip.address
 }
 
 output "vpc_id" {

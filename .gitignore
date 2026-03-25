@@ -31,3 +31,8 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+_bmad/
+_bmad-output/
+.claude/
+.gemini/

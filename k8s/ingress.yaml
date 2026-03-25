@@ -1,1 +1,17 @@
-# TODO: Implemented in story 2.3 - Ingress Kubernetes manifest for blue/green traffic switching
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: django-ingress
+  namespace: default
+  annotations:
+    # Use GCP HTTP(S) Load Balancer (external, global).
+    kubernetes.io/ingress.class: "gce"
+    # Bind the reserved static IP (provisioned by Terraform in story 2.3 — task 7).
+    # Required for a stable IP that story 5.1 maps to DNS.
+    kubernetes.io/ingress.global-static-ip-name: "talana-lb-ip"
+spec:
+  defaultBackend:
+    service:
+      name: django-blue-svc
+      port:
+        number: 80
