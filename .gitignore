@@ -31,3 +31,12 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+_bmad/
+_bmad-output/
+.claude/
+.gemini/
+.opencode/
+
+# GitHub Actions auth credentials file (if created)
+gha-creds-*.json

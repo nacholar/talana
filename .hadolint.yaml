@@ -1,2 +1,2 @@
-# Hadolint configuration — rules added as Dockerfile is implemented in Story 2.2
+# Hadolint configuration for talana Dockerfile
 ignore: []

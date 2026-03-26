@@ -1,4 +1,4 @@
-.PHONY: plan apply destroy kubeconfig fmt validate bootstrap bootstrap-import
+.PHONY: plan apply destroy kubeconfig fmt validate bootstrap bootstrap-import rollback
 
 REGION ?= us-central1
 
@@ -33,3 +33,14 @@ bootstrap-import:
 	cd terraform/bootstrap && terraform import \
 	  -var="project_id=$(PROJECT_ID)" \
 	  google_storage_bucket.state_bucket talana-state-bucket
+
+## rollback: Re-patch Ingress to a previous slot. Usage: make rollback SLOT=blue|green
+rollback:
+ifndef SLOT
+	$(error SLOT is required. Usage: make rollback SLOT=blue or make rollback SLOT=green)
+endif
+ifeq ($(filter $(SLOT),blue green),)
+	$(error Invalid SLOT value "$(SLOT)". Must be blue or green)
+endif
+	kubectl patch ingress django-ingress --type=merge -p '{"spec":{"defaultBackend":{"service":{"name":"django-$(SLOT)-svc"}}}}'
+	kubectl get ingress django-ingress -o jsonpath='{.spec.defaultBackend.service.name}'

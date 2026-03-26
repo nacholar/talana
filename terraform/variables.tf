@@ -16,8 +16,13 @@ variable "project_name" {
 }
 
 variable "domain" {
-  description = "Custom domain for the application (used for TLS cert and ALLOWED_HOSTS)"
+  # NOTE: This variable is declared for documentation purposes and for potential future
+  # Terraform-managed DNS resources. With the GKE-native ManagedCertificate CRD approach
+  # (story 5.1), the domain is NOT consumed by any Terraform resource — it is hardcoded
+  # in k8s/managed-certificate.yaml and k8s/deployment-{blue,green}.yaml instead.
+  description = "Custom domain for the application (documentational; not consumed by current Terraform resources — domain is wired in K8s manifests)"
   type        = string
+  default     = "talana.nacholar.com"
 }
 
 variable "github_repo" {

@@ -1,1 +1,21 @@
-# TODO: Implemented in story 2.3 - Ingress Kubernetes manifest for blue/green traffic switching
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: django-ingress
+  namespace: default
+  annotations:
+    # Bind the reserved static IP (provisioned by Terraform in story 2.3 — task 7).
+    # Required for a stable IP that story 5.1 maps to DNS.
+    kubernetes.io/ingress.global-static-ip-name: "talana-lb-ip"
+    # GKE-native managed TLS certificate — references ManagedCertificate CRD in managed-certificate.yaml.
+    # GKE Ingress controller provisions and attaches the GCP-managed SSL cert automatically.
+    networking.gke.io/managed-certificates: "talana-ssl-cert"
+    # HTTP → HTTPS redirect via FrontendConfig CRD (frontend-config.yaml).
+    networking.gke.io/v1beta1.FrontendConfig: "http-to-https-redirect"
+spec:
+  ingressClassName: "gce"
+  defaultBackend:
+    service:
+      name: django-blue-svc
+      port:
+        number: 80

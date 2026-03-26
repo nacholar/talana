@@ -42,3 +42,11 @@ module "artifact_registry" {
   region          = var.region
   github_sa_email = module.iam.github_sa_email
 }
+
+# Static global IP for the GCP HTTP(S) Load Balancer (story 2.3).
+# Name matches the Ingress annotation: kubernetes.io/ingress.global-static-ip-name: "talana-lb-ip".
+# Required by story 5.1 for DNS configuration.
+resource "google_compute_global_address" "lb_ip" {
+  name    = "talana-lb-ip"
+  project = var.project_id
+}
