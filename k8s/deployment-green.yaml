@@ -96,11 +96,17 @@ spec:
             httpGet:
               path: /healthz/
               port: 8000
+              httpHeaders:
+                - name: Host
+                  value: talana.nacholar.com
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /healthz/
               port: 8000
+              httpHeaders:
+                - name: Host
+                  value: talana.nacholar.com
             initialDelaySeconds: 10
             periodSeconds: 5
