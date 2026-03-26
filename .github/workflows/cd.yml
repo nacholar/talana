@@ -76,7 +76,7 @@ jobs:
 
       - name: Create GitHub release
         run: |
-          gh release create "${{ github.sha }}" \
+          gh release create "deploy-${{ github.sha }}" \
             --target "${{ github.sha }}" \
             --title "Deploy ${{ github.sha }}" \
             --notes "Blue/Green slot: ${{ steps.detect-slot.outputs.INACTIVE_SLOT }}" \
