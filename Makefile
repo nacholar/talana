@@ -12,6 +12,10 @@ plan:
 apply:
 	@test -f terraform/terraform.tfvars || (echo "ERROR: terraform/terraform.tfvars not found. Copy terraform/terraform.tfvars.example and fill in values." && exit 1)
 	cd terraform && terraform apply -var-file=terraform.tfvars
+	@echo "Setting Django secret key in Secret Manager..."
+	@python3 -c "import secrets, string; chars = string.ascii_letters + string.digits + '-_=+'; print(''.join(secrets.choice(chars) for _ in range(50)))" | \
+	  gcloud secrets versions add talana-django-secret-key --project=talana-491221 --data-file=-
+	@echo "Django secret key set."
 
 destroy:
 	@test -f terraform/terraform.tfvars || (echo "ERROR: terraform/terraform.tfvars not found. Copy terraform/terraform.tfvars.example and fill in values." && exit 1)
