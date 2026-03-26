@@ -13,8 +13,8 @@ concurrency:
   cancel-in-progress: false # Never cancel in-progress deploys
 
 permissions:
-  contents: read
-  id-token: write # MANDATORY for OIDC token issuance
+  contents: write  # upgraded from read — required for gh release create (story 4.3)
+  id-token: write  # required for OIDC WIF authentication (story 4.1)
 
 jobs:
   deploy:
@@ -45,3 +45,49 @@ jobs:
         run: |
           docker build -t ${{ env.REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/talana-artifact-registry/django:${{ github.sha }} app/
           docker push ${{ env.REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/talana-artifact-registry/django:${{ github.sha }}
+
+      - name: Configure kubectl for GKE
+        uses: google-github-actions/get-gke-credentials@64bc7249bbcf78056bb92f14d3cedc2da193946c # v2.3.5
+        with:
+          cluster_name: ${{ secrets.GKE_CLUSTER }}
+          location: ${{ secrets.GKE_REGION }}
+
+      - name: Detect inactive slot
+        id: detect-slot
+        run: scripts/detect-slot.sh >> "$GITHUB_OUTPUT"
+
+      - name: Deploy inactive slot
+        run: |
+          scripts/deploy-slot.sh \
+            "${{ steps.detect-slot.outputs.INACTIVE_SLOT }}" \
+            "${{ github.sha }}" \
+            "${{ secrets.GCP_PROJECT_ID }}" \
+            "${{ env.REGISTRY_HOST }}"
+
+      - name: Smoke test inactive slot
+        run: scripts/smoke-test.sh "${{ steps.detect-slot.outputs.INACTIVE_SLOT }}"
+
+      - name: Switch Ingress traffic to inactive slot
+        if: success()  # Explicit guard: must not run if smoke test failed (AC3 hard invariant)
+        run: |
+          scripts/switch-traffic.sh \
+            "${{ steps.detect-slot.outputs.INACTIVE_SLOT }}" \
+            "${{ steps.detect-slot.outputs.ACTIVE_SLOT }}"
+
+      - name: Create GitHub release
+        run: |
+          gh release create "${{ github.sha }}" \
+            --target "${{ github.sha }}" \
+            --title "Deploy ${{ github.sha }}" \
+            --notes "Blue/Green slot: ${{ steps.detect-slot.outputs.INACTIVE_SLOT }}" \
+            || true  # Ignore duplicate-tag error on workflow re-runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Log failure info
+        if: failure()
+        run: |
+          echo "DEPLOYMENT FAILED."
+          echo "  Active slot  : ${{ steps.detect-slot.outputs.ACTIVE_SLOT }}"
+          echo "  Inactive slot: ${{ steps.detect-slot.outputs.INACTIVE_SLOT }}"
+          echo "  Image SHA    : ${{ github.sha }}"
