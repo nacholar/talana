@@ -21,7 +21,12 @@ destroy:
 	@test -f terraform/terraform.tfvars || (echo "ERROR: terraform/terraform.tfvars not found. Copy terraform/terraform.tfvars.example and fill in values." && exit 1)
 	@echo "WARNING: This will destroy ALL GCP infrastructure including GKE, Cloud SQL, and networking."
 	@echo "Press Ctrl+C within 5 seconds to abort..." && sleep 5
-	cd terraform && terraform destroy -var-file=terraform.tfvars
+	@echo "Step 1/2: destroying Cloud SQL first (service networking connection requires it fully gone)..."
+	cd terraform && terraform destroy -target=module.cloudsql -var-file=terraform.tfvars -auto-approve
+	@echo "Waiting 60s for GCP to release the private service networking connection..."
+	sleep 60
+	@echo "Step 2/2: destroying remaining infrastructure..."
+	cd terraform && terraform destroy -var-file=terraform.tfvars -auto-approve
 	@echo "Purging soft-deleted GCP resources so re-apply works without name conflicts..."
 	-gcloud secrets delete talana-db-password --project=talana-491221 --quiet 2>/dev/null || true
 	-gcloud secrets delete talana-db-host --project=talana-491221 --quiet 2>/dev/null || true
