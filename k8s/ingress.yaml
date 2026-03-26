@@ -4,8 +4,6 @@ metadata:
   name: django-ingress
   namespace: default
   annotations:
-    # Use GCP HTTP(S) Load Balancer (external, global).
-    kubernetes.io/ingress.class: "gce"
     # Bind the reserved static IP (provisioned by Terraform in story 2.3 — task 7).
     # Required for a stable IP that story 5.1 maps to DNS.
     kubernetes.io/ingress.global-static-ip-name: "talana-lb-ip"
@@ -15,6 +13,7 @@ metadata:
     # HTTP → HTTPS redirect via FrontendConfig CRD (frontend-config.yaml).
     networking.gke.io/v1beta1.FrontendConfig: "http-to-https-redirect"
 spec:
+  ingressClassName: "gce"
   defaultBackend:
     service:
       name: django-blue-svc
