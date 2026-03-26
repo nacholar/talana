@@ -1,13 +1,23 @@
-.PHONY: plan apply destroy kubeconfig fmt validate bootstrap bootstrap-import rollback
+.PHONY: plan apply destroy kubeconfig fmt validate bootstrap bootstrap-import rollback init
 
 REGION ?= us-central1
+
+init:
+	cd terraform && terraform init
 
 plan:
 	@test -f terraform/terraform.tfvars || (echo "ERROR: terraform/terraform.tfvars not found. Copy terraform/terraform.tfvars.example and fill in values." && exit 1)
 	cd terraform && terraform plan -var-file=terraform.tfvars
 
 apply:
-	@echo "ERROR: Apply is only run in the CD pipeline. For local testing use 'make plan'." && exit 1
+	@test -f terraform/terraform.tfvars || (echo "ERROR: terraform/terraform.tfvars not found. Copy terraform/terraform.tfvars.example and fill in values." && exit 1)
+	cd terraform && terraform apply -var-file=terraform.tfvars
+
+destroy:
+	@test -f terraform/terraform.tfvars || (echo "ERROR: terraform/terraform.tfvars not found. Copy terraform/terraform.tfvars.example and fill in values." && exit 1)
+	@echo "WARNING: This will destroy ALL GCP infrastructure including GKE, Cloud SQL, and networking."
+	@echo "Press Ctrl+C within 5 seconds to abort..." && sleep 5
+	cd terraform && terraform destroy -var-file=terraform.tfvars
 
 fmt:
 	cd terraform && terraform fmt -recursive
