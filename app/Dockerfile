@@ -14,8 +14,9 @@ WORKDIR /app
 COPY --from=builder --chown=appuser:appuser /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder --chown=appuser:appuser /usr/local/bin/gunicorn /usr/local/bin/gunicorn
 COPY --from=builder --chown=appuser:appuser /app .
+RUN mkdir -p /app/staticfiles && chown appuser:appuser /app/staticfiles
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 USER 1000
 EXPOSE 8000
-CMD ["gunicorn", "talana.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2"]
+CMD ["gunicorn", "talana.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--worker-tmp-dir", "/dev/shm"]
