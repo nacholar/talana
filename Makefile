@@ -18,6 +18,18 @@ destroy:
 	@echo "WARNING: This will destroy ALL GCP infrastructure including GKE, Cloud SQL, and networking."
 	@echo "Press Ctrl+C within 5 seconds to abort..." && sleep 5
 	cd terraform && terraform destroy -var-file=terraform.tfvars
+	@echo "Purging soft-deleted GCP resources so re-apply works without name conflicts..."
+	-gcloud secrets delete talana-db-password --project=talana-491221 --quiet 2>/dev/null || true
+	-gcloud secrets delete talana-db-host --project=talana-491221 --quiet 2>/dev/null || true
+	-gcloud secrets delete talana-db-name --project=talana-491221 --quiet 2>/dev/null || true
+	-gcloud secrets delete talana-db-user --project=talana-491221 --quiet 2>/dev/null || true
+	-gcloud secrets delete talana-django-secret-key --project=talana-491221 --quiet 2>/dev/null || true
+	-gcloud iam workload-identity-pools providers delete talana-wif-provider \
+	  --workload-identity-pool=talana-wif-pool --location=global \
+	  --project=talana-491221 --quiet 2>/dev/null || true
+	-gcloud iam workload-identity-pools delete talana-wif-pool \
+	  --location=global --project=talana-491221 --quiet 2>/dev/null || true
+	@echo "Done. Re-apply is safe: run 'make apply'."
 
 fmt:
 	cd terraform && terraform fmt -recursive
