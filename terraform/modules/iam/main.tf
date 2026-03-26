@@ -20,6 +20,14 @@ resource "google_service_account" "app_sa" {
   }
 }
 
+# GitHub Actions SA IAM bindings
+
+resource "google_project_iam_member" "github_sa_container_developer" {
+  project = var.project_id
+  role    = "roles/container.developer"
+  member  = "serviceAccount:${google_service_account.github_sa.email}"
+}
+
 # App SA IAM bindings — least privilege (FR23, NFR9)
 
 resource "google_project_iam_member" "app_sa_cloudsql" {
