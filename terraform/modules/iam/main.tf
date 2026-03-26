@@ -4,20 +4,12 @@ resource "google_service_account" "github_sa" {
   account_id   = "talana-github-sa"
   display_name = "Talana GitHub Actions Service Account"
   project      = var.project_id
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "google_service_account" "app_sa" {
   account_id   = "talana-app-sa"
   display_name = "Talana Application Service Account"
   project      = var.project_id
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 # GitHub Actions SA IAM bindings
@@ -80,10 +72,6 @@ resource "google_iam_workload_identity_pool" "wif_pool" {
   display_name              = "Talana WIF Pool"
   description               = "Workload Identity Pool for GitHub Actions OIDC authentication"
   project                   = var.project_id
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "google_iam_workload_identity_pool_provider" "wif_provider" {
@@ -103,10 +91,6 @@ resource "google_iam_workload_identity_pool_provider" "wif_provider" {
 
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
-  }
-
-  lifecycle {
-    prevent_destroy = true
   }
 }
 
@@ -130,10 +114,6 @@ resource "google_secret_manager_secret" "db_password" {
   replication {
     auto {}
   }
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "google_secret_manager_secret" "db_host" {
@@ -142,10 +122,6 @@ resource "google_secret_manager_secret" "db_host" {
 
   replication {
     auto {}
-  }
-
-  lifecycle {
-    prevent_destroy = true
   }
 }
 
@@ -156,10 +132,6 @@ resource "google_secret_manager_secret" "db_name" {
   replication {
     auto {}
   }
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "google_secret_manager_secret" "db_user" {
@@ -169,10 +141,6 @@ resource "google_secret_manager_secret" "db_user" {
   replication {
     auto {}
   }
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "google_secret_manager_secret" "django_secret_key" {
@@ -181,9 +149,5 @@ resource "google_secret_manager_secret" "django_secret_key" {
 
   replication {
     auto {}
-  }
-
-  lifecycle {
-    prevent_destroy = true
   }
 }
