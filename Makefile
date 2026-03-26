@@ -1,4 +1,4 @@
-.PHONY: plan apply destroy kubeconfig fmt validate bootstrap bootstrap-import rollback init
+.PHONY: plan apply destroy kubeconfig fmt validate bootstrap bootstrap-import rollback init k8s-bootstrap
 
 REGION ?= us-central1
 
@@ -45,6 +45,18 @@ validate:
 
 kubeconfig:
 	gcloud container clusters get-credentials talana-gke-cluster --region $(REGION)
+
+# Apply all base K8s manifests in dependency order.
+# Run once after 'make apply' on a fresh cluster, before the first CD push.
+k8s-bootstrap: kubeconfig
+	kubectl apply -f k8s/serviceaccount.yaml
+	kubectl apply -f k8s/managed-certificate.yaml
+	kubectl apply -f k8s/frontend-config.yaml
+	kubectl apply -f k8s/deployment-blue.yaml
+	kubectl apply -f k8s/deployment-green.yaml
+	kubectl apply -f k8s/service-blue.yaml
+	kubectl apply -f k8s/service-green.yaml
+	kubectl apply -f k8s/ingress.yaml
 
 # Step 1: create the GCS state bucket via gsutil (runs before terraform init).
 bootstrap:
