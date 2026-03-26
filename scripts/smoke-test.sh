@@ -33,6 +33,7 @@ kubectl run "${POD_NAME}" \
   --image=curlimages/curl:8.7.1 \
   --restart=Never \
   -- curl -s -o /dev/null -w "%{http_code}" \
+  -H "Host: talana.nacholar.com" \
   "http://${CLUSTER_IP}/healthz/" >/dev/null 2>&1
 
 # Wait up to 60 seconds for the pod to reach a terminal phase (Succeeded or Failed).
