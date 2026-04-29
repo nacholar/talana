@@ -1,7 +1,7 @@
 import os
 
 os.environ.setdefault("GCP_PROJECT_ID", "test-project")
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "talana.settings_test")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myapp.settings_test")
 
 from pathlib import Path
 
@@ -31,7 +31,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "talana.urls"
+ROOT_URLCONF = "myapp.urls"
 
 TEMPLATES = [
     {
@@ -48,7 +48,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "talana.wsgi.application"
+WSGI_APPLICATION = "myapp.wsgi.application"
 
 DATABASES = {
     "default": {

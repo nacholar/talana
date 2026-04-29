@@ -45,18 +45,18 @@ After adding the `random` provider to `versions.tf`, run `terraform init -upgrad
 
 | Name | Description |
 |------|-------------|
-| `db_private_ip` | Cloud SQL instance private IP address (stored in Secret Manager as `talana-db-host`) |
+| `db_private_ip` | Cloud SQL instance private IP address (stored in Secret Manager as `APP_NAME-db-host`) |
 | `instance_connection_name` | Cloud SQL instance connection name (`project:region:instance`) for Cloud SQL Proxy |
-| `db_password` | Generated database password — stored in Secret Manager as `talana-db-password` (sensitive) |
+| `db_password` | Generated database password — stored in Secret Manager as `APP_NAME-db-password` (sensitive) |
 
 ## Resources Created
 
 | Resource | Name |
 |----------|------|
 | `random_password` | db_password (32 chars) |
-| `google_compute_global_address` | `talana-private-ip-range` |
+| `google_compute_global_address` | `APP_NAME-private-ip-range` |
 | `google_service_networking_connection` | private_vpc_connection |
-| `google_sql_database_instance` | `talana-cloudsql-pg` (POSTGRES_15, db-f1-micro, private IP only) |
-| `google_sql_database` | `talana-db` |
-| `google_sql_user` | `talana` |
+| `google_sql_database_instance` | `APP_NAME-cloudsql-pg` (POSTGRES_15, db-f1-micro, private IP only) |
+| `google_sql_database` | `APP_NAME-db` |
+| `google_sql_user` | `APP_NAME` |
 | `google_secret_manager_secret_version` | db_host, db_password, db_name, db_user |

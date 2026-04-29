@@ -1,16 +1,16 @@
 # Networking Module
 
-Provisions the core networking layer for the talana infrastructure: a private VPC, a regional subnet with Google API access and GKE secondary IP ranges, Cloud Router, Cloud NAT for outbound internet access, VPC flow logs, and a firewall rule restricting Cloud SQL access to port 5432 within the VPC.
+Provisions the core networking layer for the platform infrastructure: a private VPC, a regional subnet with Google API access and GKE secondary IP ranges, Cloud Router, Cloud NAT for outbound internet access, VPC flow logs, and a firewall rule restricting Cloud SQL access to port 5432 within the VPC.
 
 ## Resources Created
 
 | Resource | Name | Description |
 |---|---|---|
-| `google_compute_network` | `talana-vpc` | Custom VPC with manual subnet creation |
-| `google_compute_subnetwork` | `talana-subnet` | Regional private subnet with Private Google Access, GKE secondary ranges, and flow logs |
-| `google_compute_router` | `talana-router` | Cloud Router for NAT gateway attachment |
-| `google_compute_router_nat` | `talana-cloud-nat` | Cloud NAT for outbound internet access (no public node IPs), scoped to this subnet only |
-| `google_compute_firewall` | `talana-allow-cloudsql` | Firewall rule allowing TCP 5432 from subnet CIDR only |
+| `google_compute_network` | `APP_NAME-vpc` | Custom VPC with manual subnet creation |
+| `google_compute_subnetwork` | `APP_NAME-subnet` | Regional private subnet with Private Google Access, GKE secondary ranges, and flow logs |
+| `google_compute_router` | `APP_NAME-router` | Cloud Router for NAT gateway attachment |
+| `google_compute_router_nat` | `APP_NAME-cloud-nat` | Cloud NAT for outbound internet access (no public node IPs), scoped to this subnet only |
+| `google_compute_firewall` | `APP_NAME-allow-cloudsql` | Firewall rule allowing TCP 5432 from subnet CIDR only |
 
 ## Inputs
 

@@ -1,5 +1,5 @@
 output "db_private_ip" {
-  description = "Cloud SQL instance private IP address (stored in Secret Manager as talana-db-host)"
+  description = "Cloud SQL instance private IP address (stored in Secret Manager as APP_NAME-db-host)"
   value       = google_sql_database_instance.postgres.private_ip_address
 }
 
@@ -9,7 +9,7 @@ output "instance_connection_name" {
 }
 
 output "db_password" {
-  description = "Generated database password — stored in Secret Manager as talana-db-password (sensitive)"
+  description = "Generated database password — stored in Secret Manager as APP_NAME-db-password (sensitive)"
   value       = random_password.db_password.result
   sensitive   = true
 }

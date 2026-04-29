@@ -1,23 +1,23 @@
 # IAM Module
 
-Provisions least-privilege service accounts, Workload Identity Federation (WIF) for GitHub Actions OIDC authentication, and Secret Manager secrets for the Talana application. No long-lived GCP credentials are created anywhere.
+Provisions least-privilege service accounts, Workload Identity Federation (WIF) for GitHub Actions OIDC authentication, and Secret Manager secrets for the APP_NAME application. No long-lived GCP credentials are created anywhere.
 
 ## Resources Created
 
 | Resource | GCP Name | Purpose |
 |---|---|---|
-| `google_service_account.github_sa` | `talana-github-sa` | GitHub Actions identity for CD pipeline |
-| `google_service_account.app_sa` | `talana-app-sa` | Application pod identity (GKE Workload Identity) |
+| `google_service_account.github_sa` | `APP_NAME-github-sa` | GitHub Actions identity for CD pipeline |
+| `google_service_account.app_sa` | `APP_NAME-app-sa` | Application pod identity (GKE Workload Identity) |
 | `google_project_iam_member.app_sa_cloudsql` | — | Grants `roles/cloudsql.client` to app SA at project level |
 | `google_secret_manager_secret_iam_member.app_sa_*` | — | Grants `roles/secretmanager.secretAccessor` to app SA per-secret (5 bindings) |
-| `google_iam_workload_identity_pool.wif_pool` | `talana-wif-pool` | WIF pool for GitHub OIDC tokens |
-| `google_iam_workload_identity_pool_provider.wif_provider` | `talana-wif-provider` | OIDC provider scoped to `var.github_repo` |
-| `google_service_account_iam_member.wif_binding` | — | Binds WIF principal to `talana-github-sa` |
-| `google_secret_manager_secret.db_password` | `talana-db-password` | DB password (version added in Story 1.5) |
-| `google_secret_manager_secret.db_host` | `talana-db-host` | DB host (version added in Story 1.5) |
-| `google_secret_manager_secret.db_name` | `talana-db-name` | DB name (version added in Story 1.5) |
-| `google_secret_manager_secret.db_user` | `talana-db-user` | DB user (version added in Story 1.5) |
-| `google_secret_manager_secret.django_secret_key` | `talana-django-secret-key` | Django secret key (added manually pre-deploy) |
+| `google_iam_workload_identity_pool.wif_pool` | `APP_NAME-wif-pool` | WIF pool for GitHub OIDC tokens |
+| `google_iam_workload_identity_pool_provider.wif_provider` | `APP_NAME-wif-provider` | OIDC provider scoped to `var.github_repo` |
+| `google_service_account_iam_member.wif_binding` | — | Binds WIF principal to `APP_NAME-github-sa` |
+| `google_secret_manager_secret.db_password` | `APP_NAME-db-password` | DB password (version added in Story 1.5) |
+| `google_secret_manager_secret.db_host` | `APP_NAME-db-host` | DB host (version added in Story 1.5) |
+| `google_secret_manager_secret.db_name` | `APP_NAME-db-name` | DB name (version added in Story 1.5) |
+| `google_secret_manager_secret.db_user` | `APP_NAME-db-user` | DB user (version added in Story 1.5) |
+| `google_secret_manager_secret.django_secret_key` | `APP_NAME-django-secret-key` | Django secret key (added manually pre-deploy) |
 
 ## Inputs
 
@@ -43,7 +43,7 @@ GitHub Actions job
       workload_identity_provider: <wif_provider_name output>
       service_account: <github_sa_email output>
   → GCP validates: token issuer + attribute.repository == var.github_repo
-  → GCP grants short-lived access token impersonating talana-github-sa
+  → GCP grants short-lived access token impersonating APP_NAME-github-sa
   → CD pipeline authenticates with no stored keys (FR20, NFR5)
 ```
 

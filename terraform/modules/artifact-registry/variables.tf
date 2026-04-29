@@ -3,6 +3,11 @@ variable "project_id" {
   type        = string
 }
 
+variable "project_name" {
+  description = "Short project name used as prefix for GCP resource names"
+  type        = string
+}
+
 variable "region" {
   description = "GCP region for the Artifact Registry repository"
   type        = string

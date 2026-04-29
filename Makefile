@@ -18,7 +18,8 @@ k8s-bootstrap:
 	bash scripts/k8s-bootstrap.sh $(REGION)
 
 kubeconfig:
-	gcloud container clusters get-credentials talana-gke-cluster --region $(REGION)
+	@test -n "$(APP_NAME)" || (echo "ERROR: APP_NAME is required. Usage: make kubeconfig APP_NAME=<project_name>" && exit 1)
+	gcloud container clusters get-credentials $(APP_NAME)-gke-cluster --region $(REGION)
 
 fmt:
 	cd terraform && terraform fmt -recursive
@@ -27,15 +28,18 @@ validate:
 	cd terraform && terraform validate
 
 bootstrap:
-	@test -n "$(PROJECT_ID)" || (echo "ERROR: PROJECT_ID is required. Usage: make bootstrap PROJECT_ID=<id>" && exit 1)
-	bash scripts/bootstrap-state.sh "$(PROJECT_ID)" "$(REGION)"
+	@test -n "$(PROJECT_ID)" || (echo "ERROR: PROJECT_ID is required. Usage: make bootstrap PROJECT_ID=<id> BUCKET_NAME=<name>" && exit 1)
+	@test -n "$(BUCKET_NAME)" || (echo "ERROR: BUCKET_NAME is required. Usage: make bootstrap PROJECT_ID=<id> BUCKET_NAME=<name>" && exit 1)
+	bash scripts/bootstrap-state.sh "$(PROJECT_ID)" "$(BUCKET_NAME)" "$(REGION)"
 
 bootstrap-import:
-	@test -n "$(PROJECT_ID)" || (echo "ERROR: PROJECT_ID is required. Usage: make bootstrap-import PROJECT_ID=<id>" && exit 1)
+	@test -n "$(PROJECT_ID)" || (echo "ERROR: PROJECT_ID and BUCKET_NAME are required." && exit 1)
+	@test -n "$(BUCKET_NAME)" || (echo "ERROR: PROJECT_ID and BUCKET_NAME are required." && exit 1)
 	cd terraform/bootstrap && terraform init
 	cd terraform/bootstrap && terraform import \
 	  -var="project_id=$(PROJECT_ID)" \
-	  google_storage_bucket.state_bucket talana-state-bucket
+	  -var="bucket_name=$(BUCKET_NAME)" \
+	  google_storage_bucket.state_bucket $(BUCKET_NAME)
 
 rollback:
 ifndef SLOT

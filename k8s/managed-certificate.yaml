@@ -1,8 +1,10 @@
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: talana-ssl-cert
+  # SUBSTITUTE: APP_NAME must match var.project_name in terraform.tfvars.
+  name: APP_NAME-ssl-cert
   namespace: default
 spec:
   domains:
-    - talana.nacholar.com
+    # SUBSTITUTE: Replace YOUR_DOMAIN with your actual domain.
+    - YOUR_DOMAIN

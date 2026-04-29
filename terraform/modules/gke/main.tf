@@ -2,7 +2,7 @@
 # Workload Identity enabled so pods authenticate to GCP without static credentials
 
 resource "google_container_cluster" "gke_cluster" {
-  name     = "talana-gke-cluster"
+  name     = "${var.project_name}-gke-cluster"
   location = var.region
   project  = var.project_id
 

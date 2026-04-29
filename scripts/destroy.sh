@@ -10,6 +10,10 @@ if [[ ! -f "${TF_DIR}/terraform.tfvars" ]]; then
   exit 1
 fi
 
+# Read project_id and project_name from tfvars
+GCP_PROJECT_ID=$(grep 'project_id' "${TF_DIR}/terraform.tfvars" | head -1 | sed 's/.*= *"\(.*\)"/\1/')
+APP_NAME=$(grep 'project_name' "${TF_DIR}/terraform.tfvars" | head -1 | sed 's/.*= *"\(.*\)"/\1/')
+
 echo "WARNING: This will destroy ALL GCP infrastructure including GKE, Cloud SQL, and networking."
 echo "Press Ctrl+C within 5 seconds to abort..."
 sleep 5
@@ -34,15 +38,15 @@ echo "Step 3/3: destroying remaining infrastructure..."
 terraform destroy -var-file=terraform.tfvars -auto-approve
 
 echo "Purging soft-deleted GCP resources so re-apply works without name conflicts..."
-for secret in talana-db-password talana-db-host talana-db-name talana-db-user talana-django-secret-key; do
-  gcloud secrets delete "${secret}" --project=talana-491221 --quiet 2>/dev/null || true
+for secret in "${APP_NAME}-db-password" "${APP_NAME}-db-host" "${APP_NAME}-db-name" "${APP_NAME}-db-user" "${APP_NAME}-django-secret-key"; do
+  gcloud secrets delete "${secret}" --project="${GCP_PROJECT_ID}" --quiet 2>/dev/null || true
 done
 
-gcloud iam workload-identity-pools providers delete talana-wif-provider \
-  --workload-identity-pool=talana-wif-pool --location=global \
-  --project=talana-491221 --quiet 2>/dev/null || true
+gcloud iam workload-identity-pools providers delete "${APP_NAME}-wif-provider" \
+  --workload-identity-pool="${APP_NAME}-wif-pool" --location=global \
+  --project="${GCP_PROJECT_ID}" --quiet 2>/dev/null || true
 
-gcloud iam workload-identity-pools delete talana-wif-pool \
-  --location=global --project=talana-491221 --quiet 2>/dev/null || true
+gcloud iam workload-identity-pools delete "${APP_NAME}-wif-pool" \
+  --location=global --project="${GCP_PROJECT_ID}" --quiet 2>/dev/null || true
 
 echo "Done. Re-apply is safe: make apply"

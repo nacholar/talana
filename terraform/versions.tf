@@ -12,8 +12,11 @@ terraform {
     }
   }
 
+  # Backend bucket cannot use Terraform variables. Provide via:
+  #   terraform init -backend-config="bucket=YOUR_STATE_BUCKET_NAME"
+  # or set bucket = "YOUR_STATE_BUCKET_NAME" directly before first init.
   backend "gcs" {
-    bucket = "talana-state-bucket"
+    bucket = "REPLACE_WITH_STATE_BUCKET_NAME"
     prefix = "terraform/state"
   }
 }

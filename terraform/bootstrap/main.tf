@@ -23,7 +23,7 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "state_bucket" {
-  name                        = "talana-state-bucket"
+  name                        = var.bucket_name
   location                    = var.region
   force_destroy               = false
   uniform_bucket_level_access = true

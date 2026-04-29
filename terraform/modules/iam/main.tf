@@ -1,14 +1,14 @@
 # Service Accounts
 
 resource "google_service_account" "github_sa" {
-  account_id   = "talana-github-sa"
-  display_name = "Talana GitHub Actions Service Account"
+  account_id   = "${var.project_name}-github-sa"
+  display_name = "GitHub Actions Service Account"
   project      = var.project_id
 }
 
 resource "google_service_account" "app_sa" {
-  account_id   = "talana-app-sa"
-  display_name = "Talana Application Service Account"
+  account_id   = "${var.project_name}-app-sa"
+  display_name = "Application Service Account"
   project      = var.project_id
 }
 
@@ -68,16 +68,16 @@ resource "google_secret_manager_secret_iam_member" "app_sa_django_secret_key" {
 # Workload Identity Federation (FR20)
 
 resource "google_iam_workload_identity_pool" "wif_pool" {
-  workload_identity_pool_id = "talana-wif-pool"
-  display_name              = "Talana WIF Pool"
+  workload_identity_pool_id = "${var.project_name}-wif-pool"
+  display_name              = "WIF Pool"
   description               = "Workload Identity Pool for GitHub Actions OIDC authentication"
   project                   = var.project_id
 }
 
 resource "google_iam_workload_identity_pool_provider" "wif_provider" {
   workload_identity_pool_id          = google_iam_workload_identity_pool.wif_pool.workload_identity_pool_id
-  workload_identity_pool_provider_id = "talana-wif-provider"
-  display_name                       = "Talana GitHub OIDC Provider"
+  workload_identity_pool_provider_id = "${var.project_name}-wif-provider"
+  display_name                       = "GitHub OIDC Provider"
   project                            = var.project_id
 
   attribute_mapping = {
@@ -103,12 +103,9 @@ resource "google_service_account_iam_member" "wif_binding" {
 }
 
 # Secret Manager Secrets (NFR5, NFR7)
-# Secrets are created here; values (versions) are set separately:
-# - talana-db-host, talana-db-password, talana-db-name, talana-db-user → populated in Story 1.5
-# - talana-django-secret-key → populated manually before first deployment
 
 resource "google_secret_manager_secret" "db_password" {
-  secret_id = "talana-db-password"
+  secret_id = "${var.project_name}-db-password"
   project   = var.project_id
 
   replication {
@@ -117,7 +114,7 @@ resource "google_secret_manager_secret" "db_password" {
 }
 
 resource "google_secret_manager_secret" "db_host" {
-  secret_id = "talana-db-host"
+  secret_id = "${var.project_name}-db-host"
   project   = var.project_id
 
   replication {
@@ -126,7 +123,7 @@ resource "google_secret_manager_secret" "db_host" {
 }
 
 resource "google_secret_manager_secret" "db_name" {
-  secret_id = "talana-db-name"
+  secret_id = "${var.project_name}-db-name"
   project   = var.project_id
 
   replication {
@@ -135,7 +132,7 @@ resource "google_secret_manager_secret" "db_name" {
 }
 
 resource "google_secret_manager_secret" "db_user" {
-  secret_id = "talana-db-user"
+  secret_id = "${var.project_name}-db-user"
   project   = var.project_id
 
   replication {
@@ -144,7 +141,7 @@ resource "google_secret_manager_secret" "db_user" {
 }
 
 resource "google_secret_manager_secret" "django_secret_key" {
-  secret_id = "talana-django-secret-key"
+  secret_id = "${var.project_name}-django-secret-key"
   project   = var.project_id
 
   replication {

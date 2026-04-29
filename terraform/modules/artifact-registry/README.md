@@ -4,7 +4,7 @@ Provisions a Google Artifact Registry Docker repository for CD pipeline image pu
 
 ## Architecture
 
-- `google_artifact_registry_repository` — Docker format repository named `talana-artifact-registry` in the configured region
+- `google_artifact_registry_repository` — Docker format repository named `APP_NAME-artifact-registry` in the configured region
 - `google_artifact_registry_repository_iam_member` — grants `roles/artifactregistry.writer` to the GitHub Actions SA, scoped to the repository (not `google_project_iam_member`)
 
 GKE Autopilot nodes in the same GCP project can pull images from Artifact Registry without additional IAM grants (node pool SA has implicit read access to same-project registries).
@@ -46,7 +46,7 @@ gcloud services enable artifactregistry.googleapis.com
 
 | Resource | Name |
 |----------|------|
-| `google_artifact_registry_repository` | `talana-artifact-registry` (DOCKER format, regional) |
+| `google_artifact_registry_repository` | `APP_NAME-artifact-registry` (DOCKER format, regional) |
 | `google_artifact_registry_repository_iam_member` | `github_sa_writer` (`roles/artifactregistry.writer` for GitHub SA) |
 
 ## Notes

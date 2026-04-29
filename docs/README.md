@@ -1,35 +1,29 @@
-# talana SRE Challenge
+# GCP GKE Autopilot Platform
 
-**Live Application:** https://talana.nacholar.com/
-**Health Check:** https://talana.nacholar.com/healthz/
+A production-grade GCP + Kubernetes infrastructure template for Django applications. Provisions all cloud resources with Terraform (5 custom modules: networking, IAM, GKE, Cloud SQL, and Artifact Registry), runs the application on GKE Autopilot, and delivers zero-downtime deployments via a Blue/Green pipeline in GitHub Actions.
 
----
-
-## Overview
-
-This project demonstrates a production-grade GCP infrastructure for a Django application, built for the Talana SRE challenge. It provisions all cloud resources with Terraform (5 custom modules for networking, IAM, GKE, Cloud SQL, and Artifact Registry), runs the application on GKE Autopilot, and delivers zero-downtime deployments via a Blue/Green pipeline in GitHub Actions. Key GCP services used: GKE Autopilot, Cloud SQL (PostgreSQL), Secret Manager, Artifact Registry, GCP HTTPS Load Balancer, and Workload Identity Federation.
+Key GCP services: GKE Autopilot, Cloud SQL (PostgreSQL), Secret Manager, Artifact Registry, GCP HTTPS Load Balancer, Workload Identity Federation.
 
 ---
 
 ## Architecture Highlights
 
 - **GKE Autopilot** — No node pool management; Google manages worker nodes entirely.
-- **Workload Identity Federation** — GitHub Actions authenticates to GCP via OIDC; zero long-lived service account keys anywhere in the CD pipeline (NFR5).
-- **Kubernetes Workload Identity** — Django pods obtain GCP credentials at runtime via the pod service account; zero static credentials in Kubernetes manifests or Dockerfiles (NFR7).
+- **Workload Identity Federation** — GitHub Actions authenticates to GCP via OIDC; zero long-lived service account keys anywhere in the CD pipeline.
+- **Kubernetes Workload Identity** — Django pods obtain GCP credentials at runtime via the pod service account; zero static credentials in Kubernetes manifests or Dockerfiles.
 - **Blue/Green deployments via Ingress backend swap** — The inactive slot is updated and smoke-tested before Ingress traffic switches; zero-downtime deploys with instant rollback capability.
 - **Secret Manager SDK direct** — The application fetches DB credentials and Django SECRET_KEY at pod startup via the Python Secret Manager client; no sidecar, no CSI driver.
-- **Init container for DB migrations** — A `db-migrate` init container runs before the app container starts, preventing Django from serving traffic against an unmigrated schema (NFR13).
-- **GCP-managed SSL certificate** — TLS is provisioned and renewed automatically by GCP; no manual certificate management (NFR10).
-- **All private networking** — GKE nodes have no public IPs; Cloud SQL is reachable only via private IP within the VPC (NFR6).
+- **Init container for DB migrations** — A `db-migrate` init container runs before the app container starts, preventing Django from serving traffic against an unmigrated schema.
+- **GCP-managed SSL certificate** — TLS is provisioned and renewed automatically by GCP; no manual certificate management.
+- **All private networking** — GKE nodes have no public IPs; Cloud SQL is reachable only via private IP within the VPC.
 
 ---
 
 ## Quick Start
 
 ```bash
-# See docs/deployment-guide.md for the full step-by-step guide
-git clone https://github.com/nacholar/talana
-cd talana
+git clone https://github.com/<owner>/<repo>.git
+cd <repo>
 # Follow docs/deployment-guide.md
 ```
 
@@ -37,16 +31,16 @@ cd talana
 
 ---
 
-## Observe CI/CD in Action
+## CI/CD Pipelines
 
-| Pipeline | Trigger | Link |
-|----------|---------|------|
-| **CI** | Every pull request | [ci.yml runs](https://github.com/nacholar/talana/actions/workflows/ci.yml) |
-| **CD** | Push to `main` | [cd.yml runs](https://github.com/nacholar/talana/actions/workflows/cd.yml) |
+| Pipeline | Trigger |
+|----------|---------|
+| **CI** (`ci.yml`) | Every pull request |
+| **CD** (`cd.yml`) | Push to `main` |
 
-**CI** (`ci.yml`) — Lints the Dockerfile (hadolint), runs Django tests, validates Terraform, and verifies the Docker image builds successfully. Blocks PR merges on failure.
+**CI** — Lints the Dockerfile (hadolint), runs Django tests, validates Terraform, and verifies the Docker image builds successfully. Blocks PR merges on failure.
 
-**CD** (`cd.yml`) — Authenticates to GCP via OIDC WIF, builds and pushes a SHA-tagged Docker image to Artifact Registry, deploys to the inactive Blue/Green slot, runs a smoke test, and switches Ingress traffic if the smoke test passes.
+**CD** — Authenticates to GCP via OIDC WIF, builds and pushes a SHA-tagged Docker image to Artifact Registry, deploys to the inactive Blue/Green slot, runs a smoke test, and switches Ingress traffic if the smoke test passes.
 
 ---
 
@@ -58,7 +52,7 @@ k8s/            — Kubernetes manifests (Blue/Green deployments, Ingress, TLS)
 app/            — Django application (Secret Manager, /healthz/, WhiteNoise)
 .github/        — CI/CD pipelines (ci.yml + cd.yml)
 scripts/        — Shell scripts extracted from pipeline YAML
-docs/           — This deployment guide, architecture, cost estimate
+docs/           — Deployment guide, architecture, cost estimate
 ```
 
 ---

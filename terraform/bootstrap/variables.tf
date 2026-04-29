@@ -8,3 +8,8 @@ variable "region" {
   type        = string
   default     = "us-central1"
 }
+
+variable "bucket_name" {
+  description = "GCS bucket name for Terraform remote state (must be globally unique)"
+  type        = string
+}

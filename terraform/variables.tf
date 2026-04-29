@@ -10,19 +10,18 @@ variable "region" {
 }
 
 variable "project_name" {
-  description = "Project name prefix for resource naming"
+  description = "Short project name used as prefix for all GCP resource names (e.g. myapp)"
   type        = string
-  default     = "talana"
 }
 
 variable "domain" {
   # NOTE: This variable is declared for documentation purposes and for potential future
-  # Terraform-managed DNS resources. With the GKE-native ManagedCertificate CRD approach
-  # (story 5.1), the domain is NOT consumed by any Terraform resource — it is hardcoded
-  # in k8s/managed-certificate.yaml and k8s/deployment-{blue,green}.yaml instead.
-  description = "Custom domain for the application (documentational; not consumed by current Terraform resources — domain is wired in K8s manifests)"
+  # Terraform-managed DNS resources. With the GKE-native ManagedCertificate CRD approach,
+  # the domain is NOT consumed by any Terraform resource — it is set in
+  # k8s/managed-certificate.yaml and k8s/deployment-{blue,green}.yaml instead.
+  description = "Custom domain for the application (documentational; not consumed by Terraform — domain is wired in K8s manifests)"
   type        = string
-  default     = "talana.nacholar.com"
+  default     = "myapp.example.com"
 }
 
 variable "github_repo" {

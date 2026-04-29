@@ -24,12 +24,13 @@ if "GCP_PROJECT_ID" not in os.environ:
     raise ImproperlyConfigured("GCP_PROJECT_ID environment variable is required.")
 
 _PROJECT_ID = os.environ["GCP_PROJECT_ID"]
+_APP_NAME = os.environ.get("APP_NAME", "myapp")
 
-SECRET_KEY = get_secret(_PROJECT_ID, "talana-django-secret-key")
-_DB_PASSWORD = get_secret(_PROJECT_ID, "talana-db-password")
-_DB_HOST = get_secret(_PROJECT_ID, "talana-db-host")
-_DB_NAME = get_secret(_PROJECT_ID, "talana-db-name")
-_DB_USER = get_secret(_PROJECT_ID, "talana-db-user")
+SECRET_KEY = get_secret(_PROJECT_ID, f"{_APP_NAME}-django-secret-key")
+_DB_PASSWORD = get_secret(_PROJECT_ID, f"{_APP_NAME}-db-password")
+_DB_HOST = get_secret(_PROJECT_ID, f"{_APP_NAME}-db-host")
+_DB_NAME = get_secret(_PROJECT_ID, f"{_APP_NAME}-db-name")
+_DB_USER = get_secret(_PROJECT_ID, f"{_APP_NAME}-db-user")
 
 DEBUG = False
 
@@ -57,7 +58,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "talana.urls"
+ROOT_URLCONF = "myapp.urls"
 
 TEMPLATES = [
     {
@@ -74,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "talana.wsgi.application"
+WSGI_APPLICATION = "myapp.wsgi.application"
 
 DATABASES = {
     "default": {

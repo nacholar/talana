@@ -1,11 +1,11 @@
 resource "google_compute_network" "vpc" {
-  name                    = "talana-vpc"
+  name                    = "${var.project_name}-vpc"
   auto_create_subnetworks = false
   project                 = var.project_id
 }
 
 resource "google_compute_subnetwork" "subnet" {
-  name                     = "talana-subnet"
+  name                     = "${var.project_name}-subnet"
   ip_cidr_range            = var.subnet_cidr
   region                   = var.region
   network                  = google_compute_network.vpc.id
@@ -30,14 +30,14 @@ resource "google_compute_subnetwork" "subnet" {
 }
 
 resource "google_compute_router" "router" {
-  name    = "talana-router"
+  name    = "${var.project_name}-router"
   region  = var.region
   network = google_compute_network.vpc.id
   project = var.project_id
 }
 
 resource "google_compute_router_nat" "nat" {
-  name                               = "talana-cloud-nat"
+  name                               = "${var.project_name}-cloud-nat"
   router                             = google_compute_router.router.name
   region                             = var.region
   project                            = var.project_id
@@ -51,7 +51,7 @@ resource "google_compute_router_nat" "nat" {
 }
 
 resource "google_compute_firewall" "allow_cloudsql" {
-  name        = "talana-allow-cloudsql"
+  name        = "${var.project_name}-allow-cloudsql"
   network     = google_compute_network.vpc.id
   description = "Allow PostgreSQL traffic on port 5432 within VPC"
   project     = var.project_id

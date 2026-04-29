@@ -1,10 +1,10 @@
 # GKE Module
 
-Provisions a private GKE Autopilot cluster with Workload Identity enabled for the Talana SRE challenge.
+Provisions a private GKE Autopilot cluster with Workload Identity enabled for the APP_NAME SRE challenge.
 
 ## Overview
 
-- **Cluster name:** `talana-gke-cluster`
+- **Cluster name:** `APP_NAME-gke-cluster`
 - **Mode:** Autopilot (Google manages nodes automatically)
 - **Networking:** Private nodes (`enable_private_nodes = true`), public endpoint (`enable_private_endpoint = false`)
 - **Workload Identity:** Enabled — pods authenticate to GCP services without static credentials
@@ -67,5 +67,5 @@ The K8s-side annotation (`iam.gke.io/gcp-service-account`) must be applied separ
 
 | Resource | Name |
 |---|---|
-| `google_container_cluster` | `talana-gke-cluster` |
+| `google_container_cluster` | `APP_NAME-gke-cluster` |
 | `google_service_account_iam_member` | Workload Identity binding for `django-ksa` |

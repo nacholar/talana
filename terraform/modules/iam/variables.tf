@@ -8,8 +8,13 @@ variable "project_id" {
   }
 }
 
+variable "project_name" {
+  description = "Short project name used as prefix for GCP resource names"
+  type        = string
+}
+
 variable "github_repo" {
-  description = "GitHub repository in org/repo format for WIF attribute condition (e.g. my-org/talana-sre-challenge)"
+  description = "GitHub repository in org/repo format for WIF attribute condition (e.g. my-org/my-repo)"
   type        = string
 
   validation {

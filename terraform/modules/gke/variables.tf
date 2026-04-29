@@ -7,6 +7,11 @@ variable "project_id" {
   }
 }
 
+variable "project_name" {
+  description = "Short project name used as prefix for GCP resource names"
+  type        = string
+}
+
 variable "region" {
   description = "GCP region for the GKE cluster (regional cluster)"
   type        = string

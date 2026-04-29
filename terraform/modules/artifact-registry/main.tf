@@ -1,10 +1,10 @@
 # Artifact Registry — Docker repository for CD pipeline image pushes (FR5)
 
 resource "google_artifact_registry_repository" "registry" {
-  repository_id = "talana-artifact-registry"
+  repository_id = "${var.project_name}-artifact-registry"
   location      = var.region
   format        = "DOCKER"
-  description   = "Docker repository for talana application images"
+  description   = "Docker repository for application images"
   project       = var.project_id
 
   cleanup_policies {
